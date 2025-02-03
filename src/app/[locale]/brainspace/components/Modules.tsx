@@ -14,7 +14,9 @@ import Loader from "@/common/loader/loader";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 
-const Modules: React.FC<{ additionalModules?: Module[] }> = ({ additionalModules = [] }) => {
+const Modules: React.FC<{ additionalModules?: Module[] }> = ({
+  additionalModules = [],
+}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [modulesData, setModulesData] = useState<Module[]>([]);
   const { accessToken } = useAuth();
@@ -23,12 +25,15 @@ const Modules: React.FC<{ additionalModules?: Module[] }> = ({ additionalModules
   // Function to fetch modules
   const fetchModules = async () => {
     try {
-      const response = await fetch("https://posnew.smcare.net/v0_0_1-modules/get-modules", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "https://posnew.smcare.net/v0_0_1-modules/get-modules",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -73,16 +78,14 @@ const Modules: React.FC<{ additionalModules?: Module[] }> = ({ additionalModules
       if (width >= 1100) {
         setChunkSize(10); // Large screens (lg)
       } else if (width >= 800) {
-        setChunkSize(9); // Medium screens (md) 
-      }
-      else if (width >= 700) {
+        setChunkSize(9); // Medium screens (md)
+      } else if (width >= 700) {
         setChunkSize(6); // Medium screens (md)
       } else if (width >= 400) {
         setChunkSize(4); // Medium screens (md)
-      } else if ((width >= 300 && width <= 500) && height >= 800) {
+      } else if (width >= 300 && width <= 500 && height >= 800) {
         setChunkSize(4); // Small screens
-      }
-      else {
+      } else {
         setChunkSize(2); // Small screens (sm)
       }
       // if (height >= 1100) {
@@ -92,7 +95,7 @@ const Modules: React.FC<{ additionalModules?: Module[] }> = ({ additionalModules
       // } else if (height <= 800 && width >= 500) {
       //   setChunkSize(2); // Small screens
       // } else if (height >= 800) {
-      //   setChunkSize(9); // Medium screens (md) 
+      //   setChunkSize(9); // Medium screens (md)
       // } else if (height >= 700) {
       //   setChunkSize(6); // Medium screens (md)
       // } else if (height >= 400) {
@@ -136,7 +139,9 @@ const Modules: React.FC<{ additionalModules?: Module[] }> = ({ additionalModules
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-8 justify-center items-center max-w-full">
                 {chunk.map((module: Module) => (
                   <Link
-                    href={`${module.link}?token=${encodeURIComponent(accessToken || "")}`}
+                    href={`${module.link}?token=${encodeURIComponent(
+                      accessToken || ""
+                    )}`}
                     key={module.id}
                     passHref
                   >
@@ -148,7 +153,9 @@ const Modules: React.FC<{ additionalModules?: Module[] }> = ({ additionalModules
                         width={160}
                         height={160}
                       />
-                      <h3 className="text-center mt-3 mb-2 text-lg">{module.name}</h3>
+                      <h3 className="text-center mt-3 mb-2 text-lg">
+                        {module.name}
+                      </h3>
                     </div>
                   </Link>
                 ))}
