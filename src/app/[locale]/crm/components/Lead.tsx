@@ -13,10 +13,16 @@ interface LeadType {
 
 interface LeadProps {
   lead: LeadType;
-  color: string;
 }
 
-const Lead: React.FC<LeadProps> = ({ lead, color }) => {
+const borderColors: Record<string, string> = {
+  new: "border-red-500",
+  qualified: "border-blue-500",
+  proposition: "border-purple-500",
+  won: "border-green-500",
+};
+
+const Lead: React.FC<LeadProps> = ({ lead }) => {
   const { attributes, listeners, setNodeRef, isDragging, transform } =
     useDraggable({
       id: lead.id.toString(),
@@ -32,9 +38,9 @@ const Lead: React.FC<LeadProps> = ({ lead, color }) => {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`p-4 mb-2 rounded-md bg-slate-50 border-l-8 border-${color} ${
-        isDragging ? "opacity-80" : ""
-      }`}
+      className={`p-4 mb-2 rounded-md bg-slate-50 border-l-8 border- ${
+        borderColors[lead.status]
+      } ${isDragging ? "opacity-80" : ""}`}
     >
       <p className="font-semibold">{lead.title}</p>
       <p>Price: ${lead.price}</p>

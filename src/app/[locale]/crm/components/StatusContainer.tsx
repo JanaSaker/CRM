@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Leads from "./Leads";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 
 interface Lead {
   id: number;
@@ -80,17 +82,25 @@ const StatusContainer: React.FC = () => {
   };
 
   return (
-    <DndContext onDragEnd={onDragEnd}>
-      <div className="flex gap-4 p-8 h-[92vh]">
-        {status.map((s, i) => (
-          <Leads
-            key={i}
-            status={s}
-            leads={leads.filter((lead) => lead.status === s)}
-          />
-        ))}
-      </div>
-    </DndContext>
+    <>
+      <header className="flex justify-center w-full m-4">
+        <InputText placeholder="Search" />
+        <Button className="rounded-full w-8 h-8 p-5 text-white bg-blue-500 flex justify-center items-center">
+          Add
+        </Button>
+      </header>
+      <DndContext onDragEnd={onDragEnd}>
+        <div className="flex gap-4 p-8 h-[92vh]">
+          {status.map((s, i) => (
+            <Leads
+              key={i}
+              status={s}
+              leads={leads.filter((lead) => lead.status === s)}
+            />
+          ))}
+        </div>
+      </DndContext>
+    </>
   );
 };
 
