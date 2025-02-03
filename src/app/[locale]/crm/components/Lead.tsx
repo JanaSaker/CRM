@@ -13,7 +13,7 @@ interface LeadType {
 
 interface LeadProps {
   lead: LeadType;
-  onLeadClick: (lead: LeadType) => void; 
+  onLeadClick: (lead: LeadType) => void;
 }
 
 const borderColors: Record<string, string> = {
@@ -24,7 +24,13 @@ const borderColors: Record<string, string> = {
 };
 
 const Lead: React.FC<LeadProps> = ({ lead, onLeadClick }) => {
-  const { attributes, listeners, setNodeRef, isDragging, transform } = useDraggable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    isDragging,
+    transform,
+  } = useDraggable({
     id: lead.id.toString(),
   });
 
@@ -34,19 +40,28 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick }) => {
 
   return (
     <li
-      style={style}
       ref={setNodeRef}
+      style={style}
       {...listeners}
       {...attributes}
       className={`p-4 mb-2 rounded-md bg-slate-50 border-l-8 ${
         borderColors[lead.status]
-      } ${isDragging ? "opacity-80" : ""} cursor-pointer`}
-      onClick={() => onLeadClick(lead)}
+      } ${isDragging ? "opacity-80" : ""}`}
     >
       <p className="font-semibold">{lead.title}</p>
       <p>Price: ${lead.price}</p>
       <p>Contact: {lead.name}</p>
       <p>{lead.number}</p>
+
+      <button
+        className="mt-2 py-1 px-3 bg-blue-500 text-white rounded hover:bg-blue-600"
+        onClick={(e) => {
+          e.stopPropagation();
+          onLeadClick(lead);
+        }}
+      >
+        Details
+      </button>
     </li>
   );
 };
