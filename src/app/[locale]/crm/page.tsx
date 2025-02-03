@@ -1,12 +1,8 @@
 import React from "react";
-import Test from "./components/Test";
+import StatusContainer from "./components/StatusContainer";
 
 const Page = () => {
-  return (
-    <div>
-      <Test />
-    </div>
-  );
+  return <StatusContainer />;
 };
 
 export default Page;
