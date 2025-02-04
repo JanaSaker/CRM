@@ -34,7 +34,9 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick }) => {
   };
 
   return (
-    <div className="relative">
+    <div
+      className={`relative ${isDragging ? "opacity-80 scale-110 z-50" : ""}`}
+    >
       <li
         ref={setNodeRef}
         style={style}
@@ -42,7 +44,7 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick }) => {
         {...attributes}
         className={`p-4 mb-2 rounded-md bg-slate-50 border-l-8 ${
           borderColors[lead.status]
-        } ${isDragging ? "opacity-80" : ""}`}
+        }`}
       >
         <p className="font-semibold">{lead.title}</p>
         <p>Price: ${lead.price}</p>
