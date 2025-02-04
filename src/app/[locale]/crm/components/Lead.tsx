@@ -24,37 +24,34 @@ const borderColors: Record<string, string> = {
 };
 
 const Lead: React.FC<LeadProps> = ({ lead, onLeadClick }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    isDragging,
-    transform,
-  } = useDraggable({
-    id: lead.id.toString(),
-  });
+  const { attributes, listeners, setNodeRef, isDragging, transform } =
+    useDraggable({
+      id: lead.id.toString(),
+    });
 
   const style = {
     transform: CSS.Translate.toString(transform),
   };
 
   return (
-    <li
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      className={`p-4 mb-2 rounded-md bg-slate-50 border-l-8 ${
-        borderColors[lead.status]
-      } ${isDragging ? "opacity-80" : ""}`}
-    >
-      <p className="font-semibold">{lead.title}</p>
-      <p>Price: ${lead.price}</p>
-      <p>Contact: {lead.name}</p>
-      <p>{lead.number}</p>
-
+    <div className="relative">
+      <li
+        ref={setNodeRef}
+        style={style}
+        {...listeners}
+        {...attributes}
+        className={`p-4 mb-2 rounded-md bg-slate-50 border-l-8 ${
+          borderColors[lead.status]
+        } ${isDragging ? "opacity-80" : ""}`}
+      >
+        <p className="font-semibold">{lead.title}</p>
+        <p>Price: ${lead.price}</p>
+        <p>Contact: {lead.name}</p>
+        <p>{lead.number}</p>
+      </li>
       <button
-        className="mt-2 py-1 px-3 bg-blue-500 text-white rounded hover:bg-blue-600"
+        style={style}
+        className="mt-2 py-1 px-3 bg-blue-500 text-white rounded hover:bg-blue-600 absolute bottom-3 right-3"
         onClick={(e) => {
           e.stopPropagation();
           onLeadClick(lead);
@@ -62,7 +59,7 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick }) => {
       >
         Details
       </button>
-    </li>
+    </div>
   );
 };
 
