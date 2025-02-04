@@ -46,7 +46,6 @@ const OpportunityCard: React.FC = () => {
 
   return (
     <>
-      {/* A small card or button to open the modal */}
       <div
         onClick={() => setIsOpen(true)}
         className="border rounded p-4 cursor-pointer hover:shadow-md"

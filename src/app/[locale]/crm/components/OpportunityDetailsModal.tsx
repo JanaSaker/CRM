@@ -48,7 +48,6 @@ const OpportunityDetailsModal: React.FC<OpportunityDetailsModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="max-w-6xl w-full bg-white rounded shadow-lg p-6 relative">
-        {/* Close button (top-right) */}
         <button
           onClick={onClose}
           aria-label="Close"
@@ -57,7 +56,6 @@ const OpportunityDetailsModal: React.FC<OpportunityDetailsModalProps> = ({
           &times;
         </button>
 
-        {/* Header: General Details */}
         <h2 className="text-xl font-bold mb-4 border-b pb-2">General Details</h2>
 
         <div className="grid grid-cols-2 gap-4">
@@ -124,7 +122,6 @@ const OpportunityDetailsModal: React.FC<OpportunityDetailsModalProps> = ({
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="mt-6">
           <div className="flex space-x-4 border-b">
             <button
@@ -169,11 +166,9 @@ const OpportunityDetailsModal: React.FC<OpportunityDetailsModalProps> = ({
             </button>
           </div>
 
-          {/* Tab Content */}
           <div className="mt-4">
             {activeTab === 'calls' && (
               <div className="relative border p-4 rounded-md">
-                {/* The plus button to add a new call */}
                 <button
                   onClick={() => alert('Add new call')}
                   className="absolute top-4 right-4 w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-xl hover:bg-gray-400"
@@ -182,7 +177,6 @@ const OpportunityDetailsModal: React.FC<OpportunityDetailsModalProps> = ({
                   +
                 </button>
 
-                {/* Example calls table */}
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b">
@@ -196,7 +190,6 @@ const OpportunityDetailsModal: React.FC<OpportunityDetailsModalProps> = ({
                       <th className="py-2 px-2">Outcome ⇵</th>
                       <th className="py-2 px-2">Note ⇵</th>
                     </tr>
-                    {/* Filter row */}
                     <tr className="bg-gray-100 text-sm">
                       <td></td>
                       <td>
