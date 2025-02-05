@@ -1,6 +1,7 @@
 import React from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/sortable";
 
 interface LeadType {
   id: number;
@@ -13,6 +14,7 @@ interface LeadType {
 
 interface LeadProps {
   lead: LeadType;
+  grabbed: boolean;
   onLeadClick: (lead: LeadType) => void;
 }
 
@@ -23,37 +25,57 @@ const borderColors: Record<string, string> = {
   won: "border-green-500",
 };
 
-const Lead: React.FC<LeadProps> = ({ lead, onLeadClick }) => {
-  const { attributes, listeners, setNodeRef, isDragging, transform } =
-    useDraggable({
-      id: lead.id.toString(),
-    });
+const Lead: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    isDragging,
+    transform,
+    transition,
+  } = useSortable({
+    id: lead.id,
+    data: {
+      type: "Lead",
+      lead,
+    },
+  });
 
   const style = {
+    transition,
     transform: CSS.Translate.toString(transform),
   };
 
-  return (
-    <div
-      className={`relative ${isDragging ? "opacity-80 scale-110 z-50" : ""}`}
-    >
-      <li
+  if (isDragging) {
+    return (
+      <div
         ref={setNodeRef}
         style={style}
+        className="bg-slate-200 p-4 mb-2 rounded-md h-32 opacity-70 border-2 border-slate-400"
+      />
+    );
+  }
+
+  return (
+    <div ref={setNodeRef} className={`relative`}>
+      <div
         {...listeners}
         {...attributes}
-        className={`p-4 mb-2 rounded-md bg-slate-50 border-l-8 ${
-          borderColors[lead.status]
-        }`}
+        style={style}
+        className={`p-4 mb-2 rounded-md h-32 bg-slate-100 border-l-8 cursor-grab  ${
+          grabbed && "cursor-grabbing shadow-xl scale-[1.04] opacity-85"
+        } ${borderColors[lead.status]} `}
       >
         <p className="font-semibold">{lead.title}</p>
         <p>Price: ${lead.price}</p>
         <p>Contact: {lead.name}</p>
         <p>{lead.number}</p>
-      </li>
+      </div>
       <button
         style={style}
-        className="mt-2 py-1 px-3 bg-blue-500 text-white rounded hover:bg-blue-600 absolute bottom-3 right-3"
+        className={`mt-2 py-1 px-3 bg-blue-500 text-white rounded hover:bg-blue-600 absolute bottom-3 right-3 ${
+          grabbed && "scale-[1.03]"
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           onLeadClick(lead);

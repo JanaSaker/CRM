@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Lead from "./Lead";
 import { useDroppable } from "@dnd-kit/core";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface LeadType {
   id: number;
@@ -14,7 +16,7 @@ interface LeadType {
 interface LeadsProps {
   status: string;
   leads: LeadType[];
-  onLeadClick: (lead: LeadType) => void; 
+  onLeadClick: (lead: LeadType) => void;
 }
 
 const statusColors: Record<string, string> = {
@@ -25,22 +27,46 @@ const statusColors: Record<string, string> = {
 };
 
 const Leads: React.FC<LeadsProps> = ({ status, leads, onLeadClick }) => {
-  const { setNodeRef } = useDroppable({ id: status });
+  const leadsIds = useMemo(() => {
+    return leads.map((lead) => lead.id);
+  }, [leads]);
+
+  const { setNodeRef, attributes, listeners, transform, transition } =
+    useSortable({
+      id: status,
+      data: {
+        type: "status",
+        status,
+      },
+    });
+
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  };
 
   return (
     <div
       ref={setNodeRef}
+      style={style}
       className="border rounded-lg shadow-md h-full bg-white p-4"
     >
       <div className="flex gap-2 items-center">
         <div className={`rounded-full w-4 h-4 ${statusColors[status]}`}></div>
         <h2 className="font-bold">{status.toUpperCase()}</h2>
       </div>
-      <ul className="mt-2 w-80">
-        {leads.map((lead) => (
-          <Lead key={lead.id} lead={lead} onLeadClick={onLeadClick} />
-        ))}
-      </ul>
+      <div className="mt-2 w-80">
+        <SortableContext items={leadsIds}>
+          {leads.map((lead) => (
+            <Lead
+              key={lead.id}
+              lead={lead}
+              onLeadClick={onLeadClick}
+              grabbed={false}
+            />
+          ))}
+        </SortableContext>
+      </div>
     </div>
   );
 };

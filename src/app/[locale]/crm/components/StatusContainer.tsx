@@ -2,11 +2,19 @@
 
 import React, { useState } from "react";
 import Leads from "./Leads";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import OpportunityDetailsModal from "./OpportunityDetailsModal"; 
+import OpportunityDetailsModal from "./OpportunityDetailsModal";
 import ContactModal from "./ContactModal";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+} from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
+import { createPortal } from "react-dom";
+import Lead from "./Lead";
 
 interface Lead {
   id: number;
@@ -58,7 +66,7 @@ const StatusContainer: React.FC = () => {
     },
     {
       id: 3,
-      status: "qualified",
+      status: "new",
       title: "beeflex3",
       price: 10000,
       name: "contact name",
@@ -66,7 +74,7 @@ const StatusContainer: React.FC = () => {
     },
     {
       id: 4,
-      status: "qualified",
+      status: "new",
       title: "beeflex4",
       price: 10000,
       name: "contact name",
@@ -74,7 +82,7 @@ const StatusContainer: React.FC = () => {
     },
     {
       id: 5,
-      status: "proposition",
+      status: "qualified",
       title: "beeflex5",
       price: 10000,
       name: "contact name",
@@ -82,18 +90,53 @@ const StatusContainer: React.FC = () => {
     },
     {
       id: 6,
-      status: "won",
+      status: "qualified",
       title: "beeflex6",
+      price: 10000,
+      name: "contact name",
+      number: "+96176123456",
+    },
+    {
+      id: 7,
+      status: "proposition",
+      title: "beeflex7",
+      price: 10000,
+      name: "contact name",
+      number: "+96176123456",
+    },
+    {
+      id: 8,
+      status: "won",
+      title: "beeflex8",
+      price: 10000,
+      name: "contact name",
+      number: "+96176123456",
+    },
+    {
+      id: 9,
+      status: "won",
+      title: "beeflex8",
+      price: 10000,
+      name: "contact name",
+      number: "+96176123456",
+    },
+    {
+      id: 10,
+      status: "qualified",
+      title: "beeflex8",
       price: 10000,
       name: "contact name",
       number: "+96176123456",
     },
   ]);
 
-  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
+  const [selectedOpportunity, setSelectedOpportunity] =
+    useState<Opportunity | null>(null);
   const [isOpportunityModalOpen, setIsOpportunityModalOpen] = useState(false);
 
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const [activeLead, setActiveLead] = useState<Lead | null>(null);
 
   const mapLeadToOpportunity = (lead: Lead): Opportunity => {
     return {
@@ -135,6 +178,14 @@ const StatusContainer: React.FC = () => {
     setLeads(updatedLeads);
   };
 
+  const onDragStart = function (event: DragStartEvent) {
+    console.log(event.active.data.current?.lead);
+    if (event.active.data.current?.type === "Lead") {
+      setActiveLead(event.active.data.current.lead);
+      return;
+    }
+  };
+
   return (
     <>
       <header className="flex justify-center w-full m-4">
@@ -146,17 +197,31 @@ const StatusContainer: React.FC = () => {
           Add
         </Button>
       </header>
-      <DndContext onDragEnd={onDragEnd}>
+      <DndContext onDragStart={onDragStart}>
         <div className="flex gap-4 p-8 h-[92vh]">
-          {status.map((s) => (
-            <Leads
-              key={s}
-              status={s}
-              leads={leads.filter((lead) => lead.status === s)}
-              onLeadClick={handleLeadClick}
-            />
-          ))}
+          <SortableContext items={status}>
+            {status.map((s) => (
+              <Leads
+                key={s}
+                status={s}
+                leads={leads.filter((lead) => lead.status === s)}
+                onLeadClick={handleLeadClick}
+              />
+            ))}
+          </SortableContext>
         </div>
+        {createPortal(
+          <DragOverlay>
+            {activeLead && (
+              <Lead
+                lead={activeLead}
+                onLeadClick={handleLeadClick}
+                grabbed={true}
+              />
+            )}
+          </DragOverlay>,
+          document.body
+        )}
       </DndContext>
 
       {selectedOpportunity && (
