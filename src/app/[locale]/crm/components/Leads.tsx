@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import Lead from "./Lead";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 interface LeadType {
   id: number;
@@ -31,31 +30,24 @@ const Leads: React.FC<LeadsProps> = ({ status, leads, onLeadClick }) => {
     return leads.map((lead) => lead.id);
   }, [leads]);
 
-  const { setNodeRef, attributes, listeners, transform, transition } =
-    useSortable({
-      id: status,
-      data: {
-        type: "status",
-        status,
-      },
-    });
-
-  const style = {
-    transition,
-    transform: CSS.Translate.toString(transform),
-  };
+  const { setNodeRef } = useSortable({
+    id: status,
+    data: {
+      type: "Status",
+      status,
+    },
+  });
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className="border rounded-lg shadow-md h-full bg-white p-4"
+      className="border rounded-lg shadow-md h-full bg-white p-4 overflow-auto"
     >
       <div className="flex gap-2 items-center">
         <div className={`rounded-full w-4 h-4 ${statusColors[status]}`}></div>
         <h2 className="font-bold">{status.toUpperCase()}</h2>
       </div>
-      <div className="mt-2 w-80">
+      <div className="mt-2 w-80 ">
         <SortableContext items={leadsIds}>
           {leads.map((lead) => (
             <Lead

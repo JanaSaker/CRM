@@ -9,10 +9,11 @@ import ContactModal from "./ContactModal";
 import {
   DndContext,
   DragEndEvent,
+  DragOverEvent,
   DragOverlay,
   DragStartEvent,
 } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import Lead from "./Lead";
 
@@ -45,7 +46,14 @@ interface Opportunity {
 }
 
 const StatusContainer: React.FC = () => {
-  const status: string[] = ["new", "qualified", "proposition", "won"];
+  const status: string[] = [
+    "new",
+    "qualified",
+    "proposition",
+    "won",
+    "Asd",
+    "asdas",
+  ];
 
   const [leads, setLeads] = useState<Lead[]>([
     {
@@ -115,7 +123,7 @@ const StatusContainer: React.FC = () => {
     {
       id: 9,
       status: "won",
-      title: "beeflex8",
+      title: "beeflex9",
       price: 10000,
       name: "contact name",
       number: "+96176123456",
@@ -123,7 +131,7 @@ const StatusContainer: React.FC = () => {
     {
       id: 10,
       status: "qualified",
-      title: "beeflex8",
+      title: "beeflex10",
       price: 10000,
       name: "contact name",
       number: "+96176123456",
@@ -165,30 +173,74 @@ const StatusContainer: React.FC = () => {
     setIsOpportunityModalOpen(true);
   };
 
-  const onDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over) return;
+  ////this function is needed when using only draggable and not sortable
+  // const onDragEnd = (event: DragEndEvent) => {
+  //   const { active, over } = event;
+  //   if (!over) return;
 
-    const updatedLeads = leads.map((lead) => {
-      if (lead.id === +active.id) {
-        return { ...lead, status: over.id as string };
-      }
-      return lead;
-    });
-    setLeads(updatedLeads);
-  };
+  //   const updatedLeads = leads.map((lead) => {
+  //     if (lead.id === +active.id) {
+  //       return { ...lead, status: over.id as string };
+  //     }
+  //     return lead;
+  //   });
+  //   setLeads(updatedLeads);
+  // };
 
   const onDragStart = function (event: DragStartEvent) {
-    console.log(event.active.data.current?.lead);
     if (event.active.data.current?.type === "Lead") {
       setActiveLead(event.active.data.current.lead);
       return;
     }
   };
 
+  const onDragOver = function (event: DragOverEvent) {
+    const { active, over } = event;
+    if (!over) return;
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveLead = active.data.current?.type === "Lead";
+    const isOverLead = over.data.current?.type === "Lead";
+
+    if (!isActiveLead) return;
+
+    //dropping a lead over another lead
+    if (isActiveLead && isOverLead) {
+      setLeads((leads) => {
+        const activeIndex = leads.findIndex((lead) => lead.id === activeId);
+        const overIndex = leads.findIndex((lead) => lead.id === overId);
+
+        if (leads[activeIndex].status !== leads[overIndex].status) {
+          leads[activeIndex].status = leads[overIndex].status;
+        }
+
+        return arrayMove(leads, activeIndex, overIndex);
+      });
+    }
+
+    const isOverStatus = over.data.current?.type === "Status";
+
+    //dropping a lead over a status column
+
+    if (isActiveLead && isOverStatus) {
+      setLeads((leads) => {
+        const activeIndex = leads.findIndex((lead) => lead.id === activeId);
+
+        if (leads[activeIndex].status !== overId.toString()) {
+          leads[activeIndex].status = overId.toString();
+        }
+
+        return arrayMove(leads, activeIndex, activeIndex);
+      });
+    }
+  };
+
   return (
-    <>
-      <header className="flex justify-center w-full m-4">
+    <div className="overflow-y-hidden">
+      <header className="flex fixed w-full justify-center m-6">
         <InputText placeholder="Search" />
         <Button
           className="rounded-full w-8 h-8 p-5 text-white bg-blue-500 flex justify-center items-center"
@@ -197,8 +249,9 @@ const StatusContainer: React.FC = () => {
           Add
         </Button>
       </header>
-      <DndContext onDragStart={onDragStart}>
-        <div className="flex gap-4 p-8 h-[92vh]">
+
+      <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
+        <div className="w-fit mt-14 flex gap-4 p-8 h-[83.3vh] ">
           <SortableContext items={status}>
             {status.map((s) => (
               <Leads
@@ -238,7 +291,7 @@ const StatusContainer: React.FC = () => {
           onClose={() => setIsContactModalOpen(false)}
         />
       )}
-    </>
+    </div>
   );
 };
 

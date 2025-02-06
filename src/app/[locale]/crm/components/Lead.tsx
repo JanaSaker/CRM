@@ -51,7 +51,9 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="bg-slate-200 p-4 mb-2 rounded-md h-32 opacity-70 border-2 border-slate-400"
+        className={`bg-slate-100 p-4 mb-2 rounded-md h-32 border-2 ${
+          borderColors[lead.status]
+        }`}
       />
     );
   }
@@ -63,7 +65,7 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
         {...attributes}
         style={style}
         className={`p-4 mb-2 rounded-md h-32 bg-slate-100 border-l-8 cursor-grab  ${
-          grabbed && "cursor-grabbing shadow-xl scale-[1.04] opacity-85"
+          grabbed && "cursor-grabbing shadow-xl scale-[1.05] opacity-85"
         } ${borderColors[lead.status]} `}
       >
         <p className="font-semibold">{lead.title}</p>
