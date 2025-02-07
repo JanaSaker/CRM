@@ -4,7 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalLayout from "./ConditionalLayout";
 import ReduxProvider from "@/redux/ReduxProvider";
-
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,11 +53,7 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider messages={messages} locale={locale}>
           <ReduxProvider>
-           
-                <ConditionalLayout locale={locale}>
-                  {children}
-                </ConditionalLayout>
-             
+            <ConditionalLayout locale={locale}>{children}</ConditionalLayout>
           </ReduxProvider>
         </NextIntlClientProvider>
       </body>

@@ -173,20 +173,6 @@ const StatusContainer: React.FC = () => {
     setIsOpportunityModalOpen(true);
   };
 
-  ////this function is needed when using only draggable and not sortable
-  // const onDragEnd = (event: DragEndEvent) => {
-  //   const { active, over } = event;
-  //   if (!over) return;
-
-  //   const updatedLeads = leads.map((lead) => {
-  //     if (lead.id === +active.id) {
-  //       return { ...lead, status: over.id as string };
-  //     }
-  //     return lead;
-  //   });
-  //   setLeads(updatedLeads);
-  // };
-
   const onDragStart = function (event: DragStartEvent) {
     if (event.active.data.current?.type === "Lead") {
       setActiveLead(event.active.data.current.lead);
@@ -241,13 +227,20 @@ const StatusContainer: React.FC = () => {
   return (
     <div className="overflow-y-hidden">
       <header className="flex fixed w-full justify-center m-6">
-        <InputText placeholder="Search" />
-        <Button
-          className="rounded-full w-8 h-8 p-5 text-white bg-blue-500 flex justify-center items-center"
-          onClick={() => setIsContactModalOpen(true)}
-        >
-          Add
-        </Button>
+        <InputText placeholder="Search" size="small" />
+        <div className="flex">
+          <Button
+            className="custom-select-button w-9 h-9 text-white bg-blue-500"
+            icon="pi pi-plus"
+            rounded
+            raised
+            onClick={() => setIsContactModalOpen(true)}
+          />
+          <div>
+            <Button />
+            <Button />
+          </div>
+        </div>
       </header>
 
       <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
