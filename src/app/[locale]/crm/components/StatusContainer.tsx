@@ -2,10 +2,11 @@
 
 import React, { useState } from "react";
 import Leads from "./Leads";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import OpportunityDetailsModal from "./OpportunityDetailsModal";
 import ContactModal from "./ContactModal";
+import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
+import { InputText } from "primereact/inputtext";
 import {
   DndContext,
   DragEndEvent,
@@ -225,26 +226,28 @@ const StatusContainer: React.FC = () => {
   };
 
   return (
-    <div className="overflow-y-hidden">
-      <header className="flex fixed w-full justify-center m-6">
-        <InputText placeholder="Search" size="small" />
-        <div className="flex">
+    <div className="overflow-y-hidden h-[91.5vh]">
+      <header className="flex absolute box-border w-full p-4  gap-2">
+        <InputText placeholder="Search" className="ml-[43%]" />
+        <div className="flex gap-4 ml-auto">
+          <ButtonGroup>
+            <Button
+              icon="pi pi-objects-column"
+              className={`bg-amber-200 h-8 w-10`}
+            />
+            <Button className="h-8 w-10 bg-gray-300" icon="pi pi-list" />
+          </ButtonGroup>
           <Button
-            className="custom-select-button w-9 h-9 text-white bg-blue-500"
+            className="w-9 h-9 text-white bg-blue-500"
             icon="pi pi-plus"
             rounded
-            raised
             onClick={() => setIsContactModalOpen(true)}
           />
-          <div>
-            <Button />
-            <Button />
-          </div>
         </div>
       </header>
 
       <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
-        <div className="w-fit mt-14 flex gap-4 p-8 h-[83.3vh] ">
+        <div className="w-fit mt-14 flex gap-4 p-8 h-[90%] ">
           <SortableContext items={status}>
             {status.map((s) => (
               <Leads
