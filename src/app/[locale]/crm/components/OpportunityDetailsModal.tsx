@@ -1,6 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Dialog } from 'primereact/dialog';
+import { TabView, TabPanel } from 'primereact/tabview';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import { Tag } from 'primereact/tag';
+import AddCallModal from './AddCallModal'; // Ensure the correct path
+
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 interface Opportunity {
   id: number;
@@ -21,7 +32,6 @@ interface Opportunity {
   note: string;
 }
 
-
 interface OpportunityDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -33,241 +43,111 @@ const OpportunityDetailsModal: React.FC<OpportunityDetailsModalProps> = ({
   onClose,
   data,
 }) => {
-  const [activeTab, setActiveTab] = useState<'calls' | 'follow-up' | 'meetings' | 'notes'>('calls');
-
-  if (!isOpen) return null;
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [isAddCallModalOpen, setIsAddCallModalOpen] = useState<boolean>(false);
 
   const mockCalls = [
-    { id: 1, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '1 Hour', outcome: '00000', note: 'Lorem ipsum...' },
-    { id: 2, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '30 Min', outcome: '00000', note: 'Lorem ipsum...' },
-    { id: 3, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '45 Min', outcome: '00000', note: 'Lorem ipsum...' },
-    { id: 4, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '20 Min', outcome: '00000', note: 'Lorem ipsum...' },
-    { id: 5, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '1 Hour, 10 Min', outcome: '00000', note: 'Lorem ipsum...' },
+    { id: 1, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '1 Hour', outcome: '00000', note: 'Lorem ipsum dolor sit amet consectetur...' },
+    { id: 2, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '30 Min', outcome: '00000', note: 'Lorem ipsum dolor sit amet consectetur...' },
+    { id: 3, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '45 Min', outcome: '00000', note: 'Lorem ipsum dolor sit amet consectetur...' },
+    { id: 4, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '20 Min', outcome: '00000', note: 'Lorem ipsum dolor sit amet consectetur...' },
+    { id: 5, salesRep: 'Name Here', callDate: 'Jan 20,2025', duration: '1 Hour, 10 Min', outcome: '00000', note: 'Lorem ipsum dolor sit amet consectetur...' },
   ];
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="max-w-6xl w-full bg-white rounded shadow-lg p-6 relative">
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute top-3 right-4 text-2xl text-gray-600 hover:text-black"
-        >
-          &times;
-        </button>
-
-        <h2 className="text-xl font-bold mb-4 border-b pb-2">General Details</h2>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p>
-              <strong>ID:</strong> {data.id}
-            </p>
-            <p>
-              <strong>Lead ID:</strong> {data.leadId}
-            </p>
-            <p>
-              <strong>Name:</strong> {data.name}
-            </p>
-            <p>
-              <strong>Phone:</strong> {data.phone}
-            </p>
-            <p>
-              <strong>Email:</strong> {data.email}
-            </p>
-            <p>
-              <strong>Note:</strong> <br />
-              {data.note}
-            </p>
-          </div>
-          <div>
-            <p>
-              <strong>Source:</strong> {data.source}
-            </p>
-            <p>
-              <strong>Industry:</strong> {data.industry}
-            </p>
-            <p>
-              <strong>Assigned to:</strong> {data.assignedTo}
-            </p>
-            <p>
-              <strong>Status:</strong>{' '}
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-                {data.status}
-              </span>
-            </p>
-            <p>
-              <strong>Next Follow up:</strong> {data.nextFollowUp}
-            </p>
-          </div>
-          <div>
-            <p>
-              <strong>Deal Value:</strong> {data.dealValue}
-            </p>
-            <p>
-              <strong>Closing Date:</strong> {data.closingDate}
-            </p>
-            <p>
-              <strong>Deal Status:</strong>{' '}
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-                {data.dealStatus}
-              </span>
-            </p>
-            <p>
-              <strong>Created at:</strong> {data.createdAt}
-            </p>
-            <p>
-              <strong>Updated at:</strong> {data.updatedAt}
-            </p>
-          </div>
+    <>
+      <Dialog
+        visible={isOpen}
+        onHide={onClose}
+        style={{ width: '100vw', height: '100vh', maxWidth: 'none' }}
+        contentStyle={{ height: 'calc(100vh - 40px)', overflow: 'hidden' }}
+        modal
+        dismissableMask
+      >
+        {/* Header */}
+        <div className="p-4 bg-gray-900 text-white font-bold text-lg flex justify-between items-center">
+          <span>General Details</span>
+          <Button icon="pi pi-times" className="p-button-text text-white text-xl" onClick={onClose} />
         </div>
 
-        <div className="mt-6">
-          <div className="flex space-x-4 border-b">
-            <button
-              onClick={() => setActiveTab('calls')}
-              className={`py-2 px-4 ${
-                activeTab === 'calls'
-                  ? 'bg-gray-900 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Calls
-            </button>
-            <button
-              onClick={() => setActiveTab('follow-up')}
-              className={`py-2 px-4 ${
-                activeTab === 'follow-up'
-                  ? 'bg-gray-900 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Follow up
-            </button>
-            <button
-              onClick={() => setActiveTab('meetings')}
-              className={`py-2 px-4 ${
-                activeTab === 'meetings'
-                  ? 'bg-gray-900 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Meetings
-            </button>
-            <button
-              onClick={() => setActiveTab('notes')}
-              className={`py-2 px-4 ${
-                activeTab === 'notes'
-                  ? 'bg-gray-900 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Notes
-            </button>
+        {/* Main Content */}
+        <div className="p-6 bg-gray-100 h-full overflow-auto">
+          {/* Details Section */}
+          <div className="p-6 bg-white rounded-md shadow-md">
+            <div className="grid grid-cols-3 gap-6">
+              <div>
+                <p><strong>ID:</strong> {data.id}</p>
+                <p><strong>Lead ID:</strong> {data.leadId}</p>
+                <p><strong>Name:</strong> {data.name}</p>
+                <p><strong>Phone:</strong> {data.phone}</p>
+                <p><strong>Email:</strong> {data.email}</p>
+                <p><strong>Note:</strong></p>
+                <div className="p-3 border rounded bg-gray-50">{data.note}</div>
+              </div>
+              <div>
+                <p><strong>Source:</strong> {data.source}</p>
+                <p><strong>Industry:</strong> {data.industry}</p>
+                <p><strong>Assigned to:</strong> {data.assignedTo}</p>
+                <p>
+                  <strong>Status:</strong> <Tag severity="success" value={data.status} />
+                </p>
+                <p><strong>Next Follow-up:</strong> {data.nextFollowUp}</p>
+              </div>
+              <div>
+                <p><strong>Deal Value:</strong> {data.dealValue}</p>
+                <p><strong>Closing Date:</strong> {data.closingDate}</p>
+                <p>
+                  <strong>Deal Status:</strong> <Tag severity="success" value={data.dealStatus} />
+                </p>
+                <p><strong>Created at:</strong> {data.createdAt}</p>
+                <p><strong>Updated at:</strong> {data.updatedAt}</p>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-4">
-            {activeTab === 'calls' && (
-              <div className="relative border p-4 rounded-md">
-                <button
-                  onClick={() => alert('Add new call')}
-                  className="absolute top-4 right-4 w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-xl hover:bg-gray-400"
-                  title="Add Call"
-                >
-                  +
-                </button>
+          {/* Tabs Section */}
+          <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} className="mt-6">
+            <TabPanel header="Calls">
+              <div className="relative p-4 bg-white rounded-md shadow-md">
+                <Button
+                  icon="pi pi-plus"
+                  className="p-button-rounded p-button-secondary absolute top-[-45px] right-0 w-10 h-10 flex items-center justify-center border border-gray-300 shadow-lg"
+                  onClick={() => setIsAddCallModalOpen(true)}
+                  tooltip="Add Call"
+                />
+                <DataTable value={mockCalls} paginator rows={5} className="mt-4">
+                  <Column selectionMode="multiple" headerStyle={{ width: '3em' }}></Column>
+                  <Column field="id" header="ID" sortable filter filterPlaceholder="Filter ID"></Column>
+                  <Column field="salesRep" header="Sales Rep" sortable filter filterPlaceholder="Filter Rep"></Column>
+                  <Column field="callDate" header="Call Date" sortable filter filterPlaceholder="Filter Date"></Column>
+                  <Column field="duration" header="Call Duration" sortable filter filterPlaceholder="Filter Duration"></Column>
+                  <Column field="outcome" header="Outcome" sortable filter filterPlaceholder="Filter Outcome"></Column>
+                  <Column field="note" header="Note" sortable filter filterPlaceholder="Filter Note"></Column>
+                </DataTable>
+              </div>
+            </TabPanel>
 
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="py-2">
-                        <input type="checkbox" />
-                      </th>
-                      <th className="py-2 px-2">ID ⇵</th>
-                      <th className="py-2 px-2">Sales rep ⇵</th>
-                      <th className="py-2 px-2">Call Date ⇵</th>
-                      <th className="py-2 px-2">Call Duration ⇵</th>
-                      <th className="py-2 px-2">Outcome ⇵</th>
-                      <th className="py-2 px-2">Note ⇵</th>
-                    </tr>
-                    <tr className="bg-gray-100 text-sm">
-                      <td></td>
-                      <td>
-                        <input
-                          className="w-full border px-1"
-                          placeholder="Filter ID"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className="w-full border px-1"
-                          placeholder="Filter Rep"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className="w-full border px-1"
-                          placeholder="Filter Date"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className="w-full border px-1"
-                          placeholder="Filter Duration"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className="w-full border px-1"
-                          placeholder="Filter Outcome"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className="w-full border px-1"
-                          placeholder="Filter Note"
-                        />
-                      </td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockCalls.map((call) => (
-                      <tr key={call.id} className="border-b hover:bg-gray-50">
-                        <td className="py-2">
-                          <input type="checkbox" />
-                        </td>
-                        <td className="py-2 px-2">{call.id}</td>
-                        <td className="py-2 px-2">{call.salesRep}</td>
-                        <td className="py-2 px-2">{call.callDate}</td>
-                        <td className="py-2 px-2">{call.duration}</td>
-                        <td className="py-2 px-2">{call.outcome}</td>
-                        <td className="py-2 px-2">{call.note}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <TabPanel header="Follow up">
+              <div className="p-4 bg-white rounded-md shadow-md">Follow-up content here...</div>
+            </TabPanel>
 
-            {activeTab === 'follow-up' && (
-              <div className="border p-4 rounded-md">
-                <p>Follow-up content here...</p>
-              </div>
-            )}
-            {activeTab === 'meetings' && (
-              <div className="border p-4 rounded-md">
-                <p>Meetings content here...</p>
-              </div>
-            )}
-            {activeTab === 'notes' && (
-              <div className="border p-4 rounded-md">
-                <p>Notes content here...</p>
-              </div>
-            )}
-          </div>
+            <TabPanel header="Meetings">
+              <div className="p-4 bg-white rounded-md shadow-md">Meetings content here...</div>
+            </TabPanel>
+
+            <TabPanel header="Notes">
+              <div className="p-4 bg-white rounded-md shadow-md">Notes content here...</div>
+            </TabPanel>
+          </TabView>
         </div>
-      </div>
-    </div>
+      </Dialog>
+
+      {/* AddCallModal rendered on top */}
+      <AddCallModal
+        isOpen={isAddCallModalOpen}
+        onClose={() => setIsAddCallModalOpen(false)}
+      />
+    </>
   );
 };
 
