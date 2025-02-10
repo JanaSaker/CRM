@@ -1,15 +1,7 @@
 import React, { useMemo } from "react";
 import LeadCard from "./LeadCard";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-
-interface LeadType {
-  id: number;
-  status: string;
-  title: string;
-  price: number;
-  name: string;
-  number: string;
-}
+import { Lead as LeadType } from "@/redux/slices/leadsSlice";
 
 interface LeadsProps {
   status: string;

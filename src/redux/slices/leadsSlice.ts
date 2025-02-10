@@ -2,15 +2,16 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { arrayMove } from "@dnd-kit/sortable";
 
 export interface Lead {
-  id: number;
-  status: string;
+  number: string;
   title: string;
   price: number;
+  id: number;
+  status: string;
   name: string;
-  number: string;
 }
 
 export interface Opportunity {
+  lead: Lead;
   id: number;
   leadId: number;
   name: string;

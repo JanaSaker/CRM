@@ -2,11 +2,8 @@
 
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import {
-  updateLeadStatus,
-  reorderLeads,
-} from "../../../../redux/slices/leadsSlice";
+import { RootState } from "@/redux/store";
+import { updateLeadStatus, reorderLeads } from "@/redux/slices/leadsSlice";
 import Leads from "./Leads";
 import OpportunityDetailsModal from "./OpportunityDetailsModal";
 import ContactModal from "./ContactModal";
@@ -21,7 +18,7 @@ import {
 } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
 import LeadCard from "./LeadCard";
-import { Lead } from "../../../../redux/slices/leadsSlice";
+import { Lead, Opportunity } from "@/redux/slices/leadsSlice";
 
 const LeadsManager: React.FC = () => {
   const dispatch = useDispatch();
