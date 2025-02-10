@@ -2,6 +2,7 @@ import React from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
+import { Button } from "primereact/button";
 
 interface LeadType {
   id: number;
@@ -73,18 +74,15 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
         <p>Contact: {lead.name}</p>
         <p>{lead.number}</p>
       </div>
-      <button
+      <Button
+        icon="pi pi-ellipsis-v"
         style={style}
-        className={`mt-2 py-1 px-3 bg-blue-500 text-white rounded hover:bg-blue-600 absolute bottom-3 right-3 ${
-          grabbed && "scale-[1.03]"
-        }`}
+        className={`absolute top-2 right-2 ${grabbed && "scale-[1.03]"}`}
         onClick={(e) => {
           e.stopPropagation();
           onLeadClick(lead);
         }}
-      >
-        Details
-      </button>
+      />
     </div>
   );
 };

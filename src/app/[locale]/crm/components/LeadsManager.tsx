@@ -9,7 +9,6 @@ import { ButtonGroup } from "primereact/buttongroup";
 import { InputText } from "primereact/inputtext";
 import {
   DndContext,
-  DragEndEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
@@ -46,7 +45,7 @@ interface Opportunity {
   note: string;
 }
 
-const StatusContainer: React.FC = () => {
+const LeadsManager: React.FC = () => {
   const status: string[] = [
     "new",
     "qualified",
@@ -291,4 +290,4 @@ const StatusContainer: React.FC = () => {
   );
 };
 
-export default StatusContainer;
+export default LeadsManager;
