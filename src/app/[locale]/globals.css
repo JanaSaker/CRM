@@ -12,7 +12,6 @@ body {
   background-color: var(--bg-color);
 }
 
-
 /* Custom Pagination Styles */
 .custom-swiper-pagination .swiper-pagination-bullet {
   width: var(--swiper-pagination-bullet-size) !important;
@@ -121,7 +120,6 @@ body {
   /* Ensure the input doesn't overflow */
 }
 
-
 /* Ensure higher specificity */
 .custom-select-button .p-button, /* For individual buttons */
 .custom-select-button .p-highlight {
@@ -132,14 +130,15 @@ body {
 
 /* Handle hover state */
 .custom-select-button .p-button:hover {
-  background-color: var(--main-color) !important; /* Maintain main color on hover */
+  background-color: var(
+    --main-color
+  ) !important; /* Maintain main color on hover */
   color: white !important;
 }
 
 /* Transition for smooth effect */
 .custom-select-button .p-button {
   transition: background-color 0.3s, color 0.3s;
-
 }
 
 .custom-tooltip {
@@ -150,5 +149,3 @@ body {
   border-radius: 4px; /* Optional: Add rounded corners */
   padding: 5px 10px; /* Optional: Adjust padding */
 }
-
-

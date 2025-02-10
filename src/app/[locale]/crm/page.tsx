@@ -1,10 +1,8 @@
 import React from "react";
-import StatusContainer from "./components/StatusContainer";
+import LeadsManager from "./components/LeadsManager";
 
 const Page = () => {
-  return <>
-  
-  <StatusContainer /></>;
+  return <LeadsManager />;
 };
 
-export default Page;
+export default Page;
