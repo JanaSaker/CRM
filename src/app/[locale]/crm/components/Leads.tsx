@@ -6,7 +6,6 @@ import { Lead as LeadType } from "@/redux/slices/leadsSlice";
 interface LeadsProps {
   status: string;
   leads: LeadType[];
-  onLeadClick: (lead: LeadType) => void;
 }
 
 const statusColors: Record<string, string> = {
@@ -16,7 +15,7 @@ const statusColors: Record<string, string> = {
   won: "bg-green-500",
 };
 
-const Leads: React.FC<LeadsProps> = ({ status, leads, onLeadClick }) => {
+const Leads: React.FC<LeadsProps> = ({ status, leads }) => {
   const leadsIds = useMemo(() => {
     return leads.map((lead) => lead.id);
   }, [leads]);
@@ -42,12 +41,7 @@ const Leads: React.FC<LeadsProps> = ({ status, leads, onLeadClick }) => {
         <div className="mt-14 w-80 ">
           <SortableContext items={leadsIds}>
             {leads.map((lead) => (
-              <LeadCard
-                key={lead.id}
-                lead={lead}
-                onLeadClick={onLeadClick}
-                grabbed={false}
-              />
+              <LeadCard key={lead.id} lead={lead} grabbed={false} />
             ))}
           </SortableContext>
         </div>

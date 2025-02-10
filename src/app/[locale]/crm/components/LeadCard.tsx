@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { Button } from "primereact/button";
 import { Lead as LeadType } from "@/redux/slices/leadsSlice";
+import OpportunityDetailsModal from "./OpportunityDetailsModal";
 
 interface LeadProps {
   lead: LeadType;
   grabbed: boolean;
-  onLeadClick: (lead: LeadType) => void;
 }
 
 const borderColors: Record<string, string> = {
@@ -18,7 +18,12 @@ const borderColors: Record<string, string> = {
   won: "border-green-500",
 };
 
-const LeadCard: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
+const LeadCard: React.FC<LeadProps> = ({ lead, grabbed }) => {
+  const [selectedOpportunity, setSelectedOpportunity] = useState<any | null>(
+    null
+  );
+  const [isOpportunityModalOpen, setIsOpportunityModalOpen] = useState(false);
+
   const {
     attributes,
     listeners,
@@ -37,6 +42,11 @@ const LeadCard: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
   const style = {
     transition,
     transform: CSS.Translate.toString(transform),
+  };
+
+  const handleLeadClick = (lead: LeadType) => {
+    setSelectedOpportunity(lead);
+    setIsOpportunityModalOpen(true);
   };
 
   if (isDragging) {
@@ -72,9 +82,16 @@ const LeadCard: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
         className={`absolute top-2 right-2 ${grabbed && "scale-[1.03]"}`}
         onClick={(e) => {
           e.stopPropagation();
-          onLeadClick(lead);
+          handleLeadClick(lead);
         }}
       />
+      {selectedOpportunity && (
+        <OpportunityDetailsModal
+          isOpen={isOpportunityModalOpen}
+          onClose={() => setIsOpportunityModalOpen(false)}
+          data={selectedOpportunity}
+        />
+      )}
     </div>
   );
 };
