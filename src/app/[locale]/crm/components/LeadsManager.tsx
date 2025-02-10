@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../../redux/store";
+import {
+  updateLeadStatus,
+  reorderLeads,
+} from "../../../../redux/slices/leadsSlice";
 import Leads from "./Leads";
 import OpportunityDetailsModal from "./OpportunityDetailsModal";
 import ContactModal from "./ContactModal";
@@ -13,176 +19,37 @@ import {
   DragOverlay,
   DragStartEvent,
 } from "@dnd-kit/core";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
-import Lead from "./Lead";
-
-interface Lead {
-  id: number;
-  status: string;
-  title: string;
-  price: number;
-  name: string;
-  number: string;
-}
-
-interface Opportunity {
-  id: number;
-  leadId: number;
-  name: string;
-  phone: string;
-  email: string;
-  source: string;
-  industry: string;
-  assignedTo: string;
-  status: string;
-  nextFollowUp: string;
-  dealValue: string;
-  closingDate: string;
-  dealStatus: string;
-  createdAt: string;
-  updatedAt: string;
-  note: string;
-}
+import LeadCard from "./LeadCard";
+import { Lead } from "../../../../redux/slices/leadsSlice";
 
 const LeadsManager: React.FC = () => {
-  const status: string[] = [
-    "new",
-    "qualified",
-    "proposition",
-    "won",
-    "Asd",
-    "asdas",
-  ];
+  const dispatch = useDispatch();
+  const leads = useSelector((state: RootState) => state.leads.leads);
+  const status = ["new", "qualified", "proposition", "won"];
 
-  const [leads, setLeads] = useState<Lead[]>([
-    {
-      id: 1,
-      status: "new",
-      title: "beeflex1",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 2,
-      status: "new",
-      title: "beeflex2",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 3,
-      status: "new",
-      title: "beeflex3",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 4,
-      status: "new",
-      title: "beeflex4",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 5,
-      status: "qualified",
-      title: "beeflex5",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 6,
-      status: "qualified",
-      title: "beeflex6",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 7,
-      status: "proposition",
-      title: "beeflex7",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 8,
-      status: "won",
-      title: "beeflex8",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 9,
-      status: "won",
-      title: "beeflex9",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-    {
-      id: 10,
-      status: "qualified",
-      title: "beeflex10",
-      price: 10000,
-      name: "contact name",
-      number: "+96176123456",
-    },
-  ]);
-
-  const [selectedOpportunity, setSelectedOpportunity] =
-    useState<Opportunity | null>(null);
+  const [selectedOpportunity, setSelectedOpportunity] = useState<any | null>(
+    null
+  );
   const [isOpportunityModalOpen, setIsOpportunityModalOpen] = useState(false);
-
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
 
-  const mapLeadToOpportunity = (lead: Lead): Opportunity => {
-    return {
-      id: lead.id,
-      leadId: lead.id,
-      name: lead.name,
-      phone: lead.number,
-      email: "",
-      source: "",
-      industry: "",
-      assignedTo: "",
-      status: lead.status,
-      nextFollowUp: "",
-      dealValue: lead.price.toString(),
-      closingDate: "",
-      dealStatus: "Open",
-      createdAt: "",
-      updatedAt: "",
-      note: lead.title ?? "",
-    };
-  };
-
   const handleLeadClick = (lead: Lead) => {
-    const converted = mapLeadToOpportunity(lead);
-    setSelectedOpportunity(converted);
+    setSelectedOpportunity(lead);
     setIsOpportunityModalOpen(true);
   };
 
-  const onDragStart = function (event: DragStartEvent) {
+  const onDragStart = (event: DragStartEvent) => {
     if (event.active.data.current?.type === "Lead") {
-      setActiveLead(event.active.data.current.lead);
-      return;
+      setActiveLead(event.active.data.current.lead as Lead);
     }
   };
 
-  const onDragOver = function (event: DragOverEvent) {
+  const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
+
     const activeId = active.id;
     const overId = over.id;
 
@@ -193,34 +60,18 @@ const LeadsManager: React.FC = () => {
 
     if (!isActiveLead) return;
 
-    //dropping a lead over another lead
+    // Dropping a lead over another lead
     if (isActiveLead && isOverLead) {
-      setLeads((leads) => {
-        const activeIndex = leads.findIndex((lead) => lead.id === activeId);
-        const overIndex = leads.findIndex((lead) => lead.id === overId);
+      const activeIndex = leads.findIndex((lead) => lead.id === activeId);
+      const overIndex = leads.findIndex((lead) => lead.id === overId);
 
-        if (leads[activeIndex].status !== leads[overIndex].status) {
-          leads[activeIndex].status = leads[overIndex].status;
-        }
+      if (leads[activeIndex].status !== leads[overIndex].status) {
+        dispatch(
+          updateLeadStatus({ id: +activeId, status: leads[overIndex].status })
+        );
+      }
 
-        return arrayMove(leads, activeIndex, overIndex);
-      });
-    }
-
-    const isOverStatus = over.data.current?.type === "Status";
-
-    //dropping a lead over a status column
-
-    if (isActiveLead && isOverStatus) {
-      setLeads((leads) => {
-        const activeIndex = leads.findIndex((lead) => lead.id === activeId);
-
-        if (leads[activeIndex].status !== overId.toString()) {
-          leads[activeIndex].status = overId.toString();
-        }
-
-        return arrayMove(leads, activeIndex, activeIndex);
-      });
+      dispatch(reorderLeads({ fromIndex: activeIndex, toIndex: overIndex }));
     }
   };
 
@@ -232,7 +83,7 @@ const LeadsManager: React.FC = () => {
           <ButtonGroup>
             <Button
               icon="pi pi-objects-column"
-              className={`bg-amber-200 h-8 w-10`}
+              className="bg-amber-200 h-8 w-10"
             />
             <Button className="h-8 w-10 bg-gray-300" icon="pi pi-list" />
           </ButtonGroup>
@@ -246,22 +97,20 @@ const LeadsManager: React.FC = () => {
       </header>
 
       <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
-        <div className="w-fit mt-14 flex gap-4 p-8 h-[90%] ">
-          <SortableContext items={status}>
-            {status.map((s) => (
-              <Leads
-                key={s}
-                status={s}
-                leads={leads.filter((lead) => lead.status === s)}
-                onLeadClick={handleLeadClick}
-              />
-            ))}
-          </SortableContext>
+        <div className="w-fit mt-14 flex gap-4 p-8 h-[90%]">
+          {status.map((s) => (
+            <Leads
+              key={s}
+              status={s}
+              leads={leads.filter((lead) => lead.status === s)}
+              onLeadClick={handleLeadClick}
+            />
+          ))}
         </div>
         {createPortal(
           <DragOverlay>
             {activeLead && (
-              <Lead
+              <LeadCard
                 lead={activeLead}
                 onLeadClick={handleLeadClick}
                 grabbed={true}
@@ -279,7 +128,6 @@ const LeadsManager: React.FC = () => {
           data={selectedOpportunity}
         />
       )}
-
       {isContactModalOpen && (
         <ContactModal
           isOpen={isContactModalOpen}

@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
-import Lead from "./Lead";
-import { useDroppable } from "@dnd-kit/core";
+import LeadCard from "./LeadCard";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 
 interface LeadType {
@@ -51,7 +50,7 @@ const Leads: React.FC<LeadsProps> = ({ status, leads, onLeadClick }) => {
         <div className="mt-14 w-80 ">
           <SortableContext items={leadsIds}>
             {leads.map((lead) => (
-              <Lead
+              <LeadCard
                 key={lead.id}
                 lead={lead}
                 onLeadClick={onLeadClick}

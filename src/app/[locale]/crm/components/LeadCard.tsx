@@ -26,7 +26,7 @@ const borderColors: Record<string, string> = {
   won: "border-green-500",
 };
 
-const Lead: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
+const LeadCard: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
   const {
     attributes,
     listeners,
@@ -87,4 +87,4 @@ const Lead: React.FC<LeadProps> = ({ lead, onLeadClick, grabbed }) => {
   );
 };
 
-export default Lead;
+export default LeadCard;
