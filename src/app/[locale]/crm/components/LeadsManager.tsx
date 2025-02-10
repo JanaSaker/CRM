@@ -31,17 +31,38 @@ const LeadsManager: React.FC = () => {
 
   const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+    if (!over) return;
 
-    const activeLeadId = active.id;
+    const activeId = active.id;
     const overId = over.id;
-    const activeIndex = leads.findIndex((lead) => lead.id === activeLeadId);
-    const overIndex = leads.findIndex((lead) => lead.id === overId);
 
-    if (over.data.current?.type === "Lead") {
+    if (activeId === overId) return;
+
+    const isActiveLead = active.data.current?.type === "Lead";
+    const isOverLead = over.data.current?.type === "Lead";
+    const isOverStatus = over.data.current?.type === "Status";
+
+    if (!isActiveLead) return;
+
+    if (isActiveLead && isOverLead) {
+      const activeIndex = leads.findIndex((lead) => lead.id === activeId);
+      const overIndex = leads.findIndex((lead) => lead.id === overId);
+
+      ////dropping the lead over in the same column
+      if (leads[activeIndex].status !== leads[overIndex].status) {
+        dispatch(
+          updateLeadStatus({ id: +activeId, status: leads[overIndex].status })
+        );
+      }
+
       dispatch(reorderLeads({ fromIndex: activeIndex, toIndex: overIndex }));
-    } else if (over.data.current?.type === "Status") {
-      dispatch(updateLeadStatus({ id: +activeLeadId, status: overId.toString() }));
+    }
+
+    ////dropping the lead over a different column
+    if (isActiveLead && isOverStatus) {
+      const activeIndex = leads.findIndex((lead) => lead.id === activeId);
+
+      dispatch(updateLeadStatus({ id: +activeId, status: overId.toString() }));
     }
   };
 
@@ -51,7 +72,11 @@ const LeadsManager: React.FC = () => {
       <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
         <div className="w-fit mt-14 flex gap-4 p-8 h-[90%]">
           {statusColumns.map((status) => (
-            <Leads key={status} status={status} leads={leads.filter((lead) => lead.status === status)} />
+            <Leads
+              key={status}
+              status={status}
+              leads={leads.filter((lead) => lead.status === status)}
+            />
           ))}
         </div>
         {createPortal(
@@ -66,4 +91,3 @@ const LeadsManager: React.FC = () => {
 };
 
 export default LeadsManager;
-  
