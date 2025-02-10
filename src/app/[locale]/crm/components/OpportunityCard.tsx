@@ -1,65 +1,34 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import OpportunityDetailsModal from './OpportunityDetailsModal';
+import React, { useState } from "react";
+import OpportunityDetailsModal from "./OpportunityDetailsModal";
+import { Opportunity } from "@/types/Module";
 
-interface Opportunity {
-  id: number;
-  leadId: number;
-  name: string;
-  phone: string;
-  email: string;
-  source: string;
-  industry: string;
-  assignedTo: string;
-  status: string;
-  nextFollowUp: string;
-  dealValue: string;
-  closingDate: string;
-  dealStatus: string;
-  createdAt: string;
-  updatedAt: string;
-  note: string;
+interface OpportunityCardProps {
+  opportunity: Opportunity;
 }
 
-const sampleOpportunity: Opportunity = {
-  id: 1,
-  leadId: 20,
-  name: 'Lead Name Here',
-  phone: '+961 70 123 456',
-  email: 'leademployee@gmail.com',
-  source: 'Lead source here',
-  industry: 'Trading',
-  assignedTo: 'John Smith',
-  status: 'Completed',
-  nextFollowUp: 'Feb 20,2025',
-  dealValue: '$10,000',
-  closingDate: 'Mar 30,2025',
-  dealStatus: 'Won',
-  createdAt: 'Jan 20,2025',
-  updatedAt: 'Jan 25,2025',
-  note: 'Lorem ipsum dolor sit amet consectetur. Fusce morbi quis suspendisse massa dictum in eleifend bibendum. Aliquet mollis sem nulla vestibulum.',
-};
-
-const OpportunityCard: React.FC = () => {
+const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <div
         onClick={() => setIsOpen(true)}
-        className="border rounded p-4 cursor-pointer hover:shadow-md"
+        className="border rounded p-4 cursor-pointer hover:shadow-md transition"
       >
-        <h3 className="text-lg font-semibold">Opportunity #{sampleOpportunity.id}</h3>
-        <p>{sampleOpportunity.name}</p>
-        <p className="text-sm text-gray-600">{sampleOpportunity.phone}</p>
+        <h3 className="text-lg font-semibold">Opportunity #{opportunity.id}</h3>
+        <p>{opportunity.name}</p>
+        <p className="text-sm text-gray-600">{opportunity.phone}</p>
       </div>
 
-      <OpportunityDetailsModal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        data={sampleOpportunity}
-      />
+      {isOpen && (
+        <OpportunityDetailsModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          data={opportunity}
+        />
+      )}
     </>
   );
 };

@@ -16,3 +16,23 @@ export interface Attachment {
     fileName: string;
     type: string;
 }
+
+export interface Opportunity {
+    id: number;
+    leadId: number;
+    name: string;
+    phone: string;
+    email: string;
+    source: string;
+    industry: string;
+    assignedTo: string;
+    status: string;
+    nextFollowUp: string;
+    dealValue: string;
+    closingDate: string;
+    dealStatus: string;
+    createdAt: string;
+    updatedAt: string;
+    note: string;
+  }
+  

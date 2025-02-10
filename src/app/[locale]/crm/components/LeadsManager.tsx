@@ -7,20 +7,20 @@ import { updateLeadStatus, reorderLeads } from "@/redux/slices/leadsSlice";
 import Leads from "./Leads";
 import {
   DndContext,
-  DragOverEvent,
   DragOverlay,
   DragStartEvent,
+  DragOverEvent,
 } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
 import LeadCard from "./LeadCard";
-import { Lead } from "@/redux/slices/leadsSlice";
 import Header from "./Header";
+import { Lead } from "@/redux/slices/leadsSlice";
+
+const statusColumns = ["new", "qualified", "proposition", "won"];
 
 const LeadsManager: React.FC = () => {
   const dispatch = useDispatch();
   const leads = useSelector((state: RootState) => state.leads.leads);
-  const status = ["new", "qualified", "proposition", "won"];
-
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
 
   const onDragStart = (event: DragStartEvent) => {
@@ -31,58 +31,32 @@ const LeadsManager: React.FC = () => {
 
   const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    if (!over) return;
+    if (!over || active.id === over.id) return;
 
-    const activeId = active.id;
+    const activeLeadId = active.id;
     const overId = over.id;
+    const activeIndex = leads.findIndex((lead) => lead.id === activeLeadId);
+    const overIndex = leads.findIndex((lead) => lead.id === overId);
 
-    if (activeId === overId) return;
-
-    const isActiveLead = active.data.current?.type === "Lead";
-    const isOverLead = over.data.current?.type === "Lead";
-    const isOverStatus = over.data.current?.type === "Status";
-
-    if (!isActiveLead) return;
-
-    if (isActiveLead && isOverLead) {
-      const activeIndex = leads.findIndex((lead) => lead.id === activeId);
-      const overIndex = leads.findIndex((lead) => lead.id === overId);
-
-      ////dropping the lead over in the same column
-      if (leads[activeIndex].status !== leads[overIndex].status) {
-        dispatch(
-          updateLeadStatus({ id: +activeId, status: leads[overIndex].status })
-        );
-      }
-
+    if (over.data.current?.type === "Lead") {
       dispatch(reorderLeads({ fromIndex: activeIndex, toIndex: overIndex }));
-    }
-
-    ////dropping the lead over a different column
-    if (isActiveLead && isOverStatus) {
-      const activeIndex = leads.findIndex((lead) => lead.id === activeId);
-
-      dispatch(updateLeadStatus({ id: +activeId, status: overId.toString() }));
+    } else if (over.data.current?.type === "Status") {
+      dispatch(updateLeadStatus({ id: +activeLeadId, status: overId.toString() }));
     }
   };
 
   return (
     <div className="overflow-y-hidden h-[91.5vh]">
       <Header />
-
       <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
         <div className="w-fit mt-14 flex gap-4 p-8 h-[90%]">
-          {status.map((s) => (
-            <Leads
-              key={s}
-              status={s}
-              leads={leads.filter((lead) => lead.status === s)}
-            />
+          {statusColumns.map((status) => (
+            <Leads key={status} status={status} leads={leads.filter((lead) => lead.status === status)} />
           ))}
         </div>
         {createPortal(
           <DragOverlay>
-            {activeLead && <LeadCard lead={activeLead} grabbed={true} />}
+            {activeLead && <LeadCard lead={activeLead} grabbed />}
           </DragOverlay>,
           document.body
         )}
@@ -92,3 +66,4 @@ const LeadsManager: React.FC = () => {
 };
 
 export default LeadsManager;
+  
