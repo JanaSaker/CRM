@@ -3,15 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { Button } from "primereact/button";
-
-interface LeadType {
-  id: number;
-  status: string;
-  title: string;
-  price: number;
-  name: string;
-  number: string;
-}
+import { Lead as LeadType } from "@/redux/slices/leadsSlice";
 
 interface LeadProps {
   lead: LeadType;
