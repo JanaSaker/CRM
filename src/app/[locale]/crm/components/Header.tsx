@@ -4,7 +4,12 @@ import { InputText } from "primereact/inputtext";
 import React, { useState } from "react";
 import ContactModal from "./ContactModal";
 
-export default function Header() {
+interface HeaderProps {
+  setActive: any;
+  active: string;
+}
+
+export default function Header({ setActive, active }: HeaderProps) {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   return (
@@ -14,9 +19,18 @@ export default function Header() {
         <ButtonGroup>
           <Button
             icon="pi pi-objects-column"
-            className="bg-amber-200 h-8 w-10"
+            className={`${
+              active === "kanban" ? "bg-amber-200" : " bg-gray-300"
+            } h-8 w-10`}
+            onClick={() => setActive("kanban")}
           />
-          <Button className="h-8 w-10 bg-gray-300" icon="pi pi-list" />
+          <Button
+            className={`${
+              active === "table" ? "bg-amber-200" : " bg-gray-300"
+            } h-8 w-10`}
+            icon="pi pi-list"
+            onClick={() => setActive("table")}
+          />
         </ButtonGroup>
         <Button
           className="w-9 h-9 text-white bg-blue-500"

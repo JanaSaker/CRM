@@ -22,6 +22,7 @@ const LeadsManager: React.FC = () => {
   const dispatch = useDispatch();
   const leads = useSelector((state: RootState) => state.leads.leads);
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
+  const [active, setActive] = useState("kanban");
 
   const onDragStart = (event: DragStartEvent) => {
     if (event.active.data.current?.type === "Lead") {
@@ -60,32 +61,34 @@ const LeadsManager: React.FC = () => {
 
     ////dropping the lead over a different column
     if (isActiveLead && isOverStatus) {
-      const activeIndex = leads.findIndex((lead) => lead.id === activeId);
-
       dispatch(updateLeadStatus({ id: +activeId, status: overId.toString() }));
     }
   };
 
   return (
     <div className="overflow-y-hidden h-[91.5vh]">
-      <Header />
-      <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
-        <div className="w-fit mt-14 flex gap-4 p-8 h-[90%]">
-          {statusColumns.map((status) => (
-            <Leads
-              key={status}
-              status={status}
-              leads={leads.filter((lead) => lead.status === status)}
-            />
-          ))}
-        </div>
-        {createPortal(
-          <DragOverlay>
-            {activeLead && <LeadCard lead={activeLead} grabbed />}
-          </DragOverlay>,
-          document.body
-        )}
-      </DndContext>
+      <Header setActive={setActive} active={active} />
+      {active === "kanban" ? (
+        <DndContext onDragStart={onDragStart} onDragOver={onDragOver}>
+          <div className="w-fit mt-14 flex gap-4 p-8 h-[90%]">
+            {statusColumns.map((status) => (
+              <Leads
+                key={status}
+                status={status}
+                leads={leads.filter((lead) => lead.status === status)}
+              />
+            ))}
+          </div>
+          {createPortal(
+            <DragOverlay>
+              {activeLead && <LeadCard lead={activeLead} grabbed />}
+            </DragOverlay>,
+            document.body
+          )}
+        </DndContext>
+      ) : (
+        "add table component here"
+      )}
     </div>
   );
 };
